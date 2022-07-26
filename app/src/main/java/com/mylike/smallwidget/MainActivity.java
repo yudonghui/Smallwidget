@@ -1,7 +1,9 @@
 package com.mylike.smallwidget;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -14,9 +16,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         String main = getIntent().getStringExtra("main");
-        if (!TextUtils.isEmpty(main)) {
-            TextView mTextView = findViewById(R.id.textView);
-            mTextView.setText(main);
-        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void addWidget(View view) {
+        new WidgetController().addToMainScreen(this);
     }
 }

@@ -52,7 +52,7 @@ public class NewAppWidget extends AppWidgetProvider {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.putExtra(WECHAT_OPEN_SCANER_NAME, true);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        ComponentName componentName= new ComponentName(WECHAT_APP_PACKAGE, WECHAT_LAUNCHER_UI_CLASS);
+        ComponentName componentName = new ComponentName(WECHAT_APP_PACKAGE, WECHAT_LAUNCHER_UI_CLASS);
         intent.setComponent(componentName);
         //PendingIntent pendingIntent2 = PendingIntent.getBroadcast(context, R.id.ll_wx_scan, intent2, PendingIntent.FLAG_UPDATE_CURRENT);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
@@ -211,6 +211,15 @@ public class NewAppWidget extends AppWidgetProvider {
             }
         }
         return false;
+    }
+
+    /**
+     * 更新组件
+     */
+    public static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId, int imgRes) {
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.new_app_widget);
+        //这里设置更新的控件内容，例如 views.setTextViewText(R.id.appwidget_text, widgetText);
+        appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 }
 
