@@ -23,9 +23,9 @@ android {
     signingConfigs {
         release {
             storeFile file('D:/gitProject/SmallWidget/smallWidget.jks')
-            storePassword "mylike@"
+            storePassword "987116yu"
             keyAlias "key0"
-            keyPassword "mylike@"
+            keyPassword "987116yu"
         }
     }
 }
