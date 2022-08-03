@@ -26,6 +26,7 @@
                 android:src="@mipmap/alipay_scan" />
 
             <TextView
+                android:id="@+id/tv_alipay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
@@ -48,6 +49,7 @@
                 android:src="@mipmap/alipay_pay" />
 
             <TextView
+                android:id="@+id/tv_alipay_pay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
@@ -71,6 +73,7 @@
                 android:src="@mipmap/wx_scan" />
 
             <TextView
+                android:id="@+id/tv_wx_scan"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
@@ -95,6 +98,7 @@
                 android:src="@mipmap/wx_pay" />
 
             <TextView
+                android:id="@+id/tv_wx_pay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"

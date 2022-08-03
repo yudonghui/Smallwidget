@@ -11,6 +11,8 @@ import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -35,8 +37,14 @@ public class NewAppWidget extends AppWidgetProvider {
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.new_app_widget);
         //views.setTextViewText(R.id.appwidget_text, widgetText);
-        if (isAliPayInstalled(context))
-            views.setImageViewBitmap(R.id.iv_alipay, BitmapFactory.decodeResource(context.getResources(), R.mipmap.wx_scan));
+        if (!isAliPayInstalled(context)) {
+            views.setTextViewText(R.id.tv_alipay, "未安装支付宝");
+            views.setTextViewText(R.id.tv_alipay_pay, "未安装支付宝");
+        }
+        if (!isWxInstall(context)) {
+            views.setTextViewText(R.id.tv_wx_scan, "未安装微信");
+            views.setTextViewText(R.id.tv_wx_pay, "未安装微信");
+        }
 
         Uri uriAliScan = Uri.parse("alipayqr://platformapi/startapp?saId=10000007");
         Intent intentAliScan = new Intent(Intent.ACTION_VIEW, uriAliScan);
@@ -58,6 +66,23 @@ public class NewAppWidget extends AppWidgetProvider {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         views.setOnClickPendingIntent(R.id.ll_wx_scan, pendingIntent);
 
+/*
+        Uri uriWx = Uri.parse("weixin://");
+        Intent intentWx = new Intent(Intent.ACTION_VIEW, uriWx);
+        PendingIntent pendingIntentWx = PendingIntent.getActivity(context, 0, intentWx, 0);
+        views.setOnClickPendingIntent(R.id.ll_wx_pay, pendingIntentWx);*/
+
+
+
+        Intent intentWx = new Intent(Intent.ACTION_VIEW);
+        intentWx.putExtra(WECHAT_OPEN_SCANER_NAME, true);
+        intentWx.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        ComponentName componentNameWx = new ComponentName(WECHAT_APP_PACKAGE, WECHAT_LAUNCHER_UI_CLASS);
+        intentWx.setComponent(componentNameWx);
+        //PendingIntent pendingIntent2 = PendingIntent.getBroadcast(context, R.id.ll_wx_scan, intent2, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntentWx = PendingIntent.getActivity(context, 0, intentWx, 1);
+        views.setOnClickPendingIntent(R.id.ll_wx_pay, pendingIntentWx);
+
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
@@ -72,7 +97,37 @@ public class NewAppWidget extends AppWidgetProvider {
             updateAppWidget(context, appWidgetManager, appWidgetId);
         }
     }
-
+    /**
+     * 辅助服务是否开启
+     *
+     * @param context 活动context
+     * @return
+     */
+    public static boolean isAccessibilitySettingsOn(Context context) {
+        int accessibilityEnabled = 0;
+        final String service = context.getPackageName() + "/" + PayAccessibility.class.getCanonicalName();
+        try {
+            accessibilityEnabled = Settings.Secure.getInt(context.getApplicationContext().getContentResolver(),
+                    Settings.Secure.ACCESSIBILITY_ENABLED);
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+        TextUtils.SimpleStringSplitter mStringColonSplitter = new TextUtils.SimpleStringSplitter(':');
+        if (accessibilityEnabled == 1) {
+            String settingValue = Settings.Secure.getString(context.getApplicationContext().getContentResolver(),
+                    Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
+            if (settingValue != null) {
+                mStringColonSplitter.setString(settingValue);
+                while (mStringColonSplitter.hasNext()) {
+                    String accessibilityService = mStringColonSplitter.next();
+                    if (accessibilityService.equalsIgnoreCase(service)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
