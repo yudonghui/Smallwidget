@@ -12,7 +12,14 @@
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         android:onClick="addWidget"
-        android:text="添加小部件" />
+        android:text="打开微信二维码" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:onClick="bindService"
+        android:text="绑定服务" />
 
     <TextView
         android:id="@+id/tv_content"

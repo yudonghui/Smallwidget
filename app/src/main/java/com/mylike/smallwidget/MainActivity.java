@@ -55,55 +55,7 @@ public class MainActivity extends AppCompatActivity {
         if (!Utils.isNotificationListenerEnabled(this)) {//是否开启通知使用权
             Utils.openNotificationListenSettings(this);
         }
-        bindService(new Intent(this, MediaControllerService.class), new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                MediaControllerService.MyBinder rcBinder = (MediaControllerService.MyBinder) service;
-                mediaControllerService = rcBinder.getService();
-                mediaControllerService.registerRemoteController();
-                mediaControllerService.setExternalClientUpdateListener(new RemoteController.OnClientUpdateListener() {
-                    @Override
-                    public void onClientChange(boolean clearing) {
 
-                    }
-
-                    @Override
-                    public void onClientPlaybackStateUpdate(int state) {
-
-                    }
-
-                    @Override
-                    public void onClientPlaybackStateUpdate(int state, long stateChangeTimeMs, long currentPosMs, float speed) {
-                        if (state == 2) {
-                            mBtPlayPause.setText("播放");
-                        } else if (state == 3) {
-                            mBtPlayPause.setText("暂停");
-                        }
-                    }
-
-                    @Override
-                    public void onClientTransportControlUpdate(int transportControlFlags) {
-
-                    }
-
-                    @Override
-                    public void onClientMetadataUpdate(RemoteController.MetadataEditor metadataEditor) {
-                        String artist = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_ARTIST, "null");
-                        String album = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_ALBUM, "null");
-                        String title = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_TITLE, "null");
-                        Long duration = metadataEditor.getLong(MediaMetadataRetriever.METADATA_KEY_DURATION, -1);
-                        Bitmap defaultCover = BitmapFactory.decodeResource(getResources(), android.R.drawable.ic_menu_compass);
-                        Bitmap bitmap = metadataEditor.getBitmap(RemoteController.MetadataEditor.BITMAP_KEY_ARTWORK, defaultCover);
-                        mTvContent.setText("artist: "+artist + "album: "+album + "title: "+title +"duration: "+ duration);
-                    }
-                });
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-
-            }
-        }, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -147,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
             finish();
         }
-
     }
 
     /**
@@ -208,14 +159,69 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void previous(View view) {
-        mediaControllerService.sendMusicKeyEvent(KeyEvent.KEYCODE_MEDIA_PREVIOUS);
+        if (mediaControllerService != null)
+            mediaControllerService.sendMusicKeyEvent(KeyEvent.KEYCODE_MEDIA_PREVIOUS);
     }
 
     public void playOrPause(View view) {
-        mediaControllerService.sendMusicKeyEvent(KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE);
+        if (mediaControllerService != null)
+            mediaControllerService.sendMusicKeyEvent(KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE);
     }
 
     public void next(View view) {
-        mediaControllerService.sendMusicKeyEvent(KeyEvent.KEYCODE_MEDIA_NEXT);
+        if (mediaControllerService != null)
+            mediaControllerService.sendMusicKeyEvent(KeyEvent.KEYCODE_MEDIA_NEXT);
+    }
+
+    public void bindService(View view) {
+        bindService(new Intent(this, MediaControllerService.class), new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                MediaControllerService.MyBinder rcBinder = (MediaControllerService.MyBinder) service;
+                mediaControllerService = rcBinder.getService();
+                mediaControllerService.registerRemoteController();
+                mediaControllerService.setExternalClientUpdateListener(new RemoteController.OnClientUpdateListener() {
+                    @Override
+                    public void onClientChange(boolean clearing) {
+
+                    }
+
+                    @Override
+                    public void onClientPlaybackStateUpdate(int state) {
+
+                    }
+
+                    @Override
+                    public void onClientPlaybackStateUpdate(int state, long stateChangeTimeMs, long currentPosMs, float speed) {
+                        if (state == 2) {
+                            mBtPlayPause.setText("播放");
+                        } else if (state == 3) {
+                            mBtPlayPause.setText("暂停");
+                        }
+                    }
+
+                    @Override
+                    public void onClientTransportControlUpdate(int transportControlFlags) {
+
+                    }
+
+                    @Override
+                    public void onClientMetadataUpdate(RemoteController.MetadataEditor metadataEditor) {
+                        String artist = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_ARTIST, "null");
+                        String album = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_ALBUM, "null");
+                        String title = metadataEditor.getString(MediaMetadataRetriever.METADATA_KEY_TITLE, "null");
+                        Long duration = metadataEditor.getLong(MediaMetadataRetriever.METADATA_KEY_DURATION, -1);
+                        Bitmap defaultCover = BitmapFactory.decodeResource(getResources(), android.R.drawable.ic_menu_compass);
+                        Bitmap bitmap = metadataEditor.getBitmap(RemoteController.MetadataEditor.BITMAP_KEY_ARTWORK, defaultCover);
+                        mTvContent.setText("artist: " + artist + "album: " + album + "title: " + title + "duration: " + duration);
+                    }
+                });
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+        }, Context.BIND_AUTO_CREATE);
     }
 }

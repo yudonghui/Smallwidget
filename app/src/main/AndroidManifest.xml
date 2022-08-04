@@ -23,6 +23,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <receiver android:name=".CommonWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/common_widget_info" />
+        </receiver>
         <receiver android:name=".MusicWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -46,7 +55,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
@@ -76,14 +85,9 @@
         </provider>
 
         <service
-            android:name=".MediaControllerService"
-            android:foregroundServiceType="phoneCall|mediaPlayback|dataSync|mediaProjection|connectedDevice|location"
-            android:label="通知监控"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
-            <intent-filter>
-                <action android:name="android.service.notification.NotificationListenerService" />
-            </intent-filter>
-        </service>
+            android:name=".WidgetTimerService"
+            android:priority="1000"
+            android:process=":remote" />
     </application>
 
 </manifest>
